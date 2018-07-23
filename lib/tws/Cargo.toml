@@ -1,10 +1,22 @@
 [package]
-name = "tws"
+name = "pgyer-ib"
 version = "0.1.0"
-authors = ["Xiaojun Gao <gaoxiaojun@jscnnet.com>"]
+authors = ["Xiaojun Gao <gaoxiaojun@gmail.com>"]
 
 [dependencies]
-futures = "0.1.23"
-tokio = "0.1.7"
-tokio-io = "0.1.7"
-tokio-codec = "0.1.0"
+nom = "^4.0"
+log = "^0.4.1"
+bytes = "^0.4"
+futures = "^0.1"
+futures-locks = "^0.3"
+tokio = "^0.1.6"
+tokio-codec = "^0.1"
+tokio-io = "^0.1"
+tokio-timer = "^0.2"
+lazy_static = "1.0"
+cookie-factory = "0.2.4"
+failure = "0.1.1"
+failure_derive = "0.1.1"
+chrono = "^0.4.0"
+penny = "0.2.0"
+env_logger = "0.5.10"
