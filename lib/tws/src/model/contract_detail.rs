@@ -1,5 +1,5 @@
-use contract::*;
-use tagvalue::*;
+use model::contract::*;
+use model::tagvalue::*;
 
 pub struct ContractDetails {
     pub contract: Contract,

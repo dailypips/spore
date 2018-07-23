@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub enum Message {
     // Incoming Messages
     //TickPrice(TickPrice),

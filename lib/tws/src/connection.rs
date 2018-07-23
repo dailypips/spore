@@ -3,32 +3,22 @@ use std::net::SocketAddr;
 
 use futures::Future;
 
+use bytes::{Bytes, BytesMut};
 use tokio::net::TcpStream;
-use tokio_io::{codec::length_delimited, codec::Framed, AsyncRead};
+use tokio_io::{codec::length_delimited, codec::Framed, AsyncRead, AsyncWrite};
+//use clear_on_drop::ClearOnDrop;
+use failure::Error;
+use futures;
+use futures::Sink;
+use futures::Stream;
+use std;
+use tokio;
 
 pub type RespConnection = Framed<TcpStream, length_delimited::Framed>;
 
 pub fn connect(addr: &SocketAddr) -> impl Future<Item = RespConnection, Error = io::Error> {
     TcpStream::connect(addr).map(move |socket| length_delimited::Framed::new(socket))
 }
-
-use bytes::{Bytes, BytesMut};
-use clear_on_drop::ClearOnDrop;
-use failure::Error;
-use futures;
-use futures::Future;
-use futures::Sink;
-use futures::Stream;
-use length_delimited;
-use snow::{self, params::NoiseParams, NoiseBuilder};
-use std;
-use std::net::ToSocketAddrs;
-use subtle::ConstantTimeEq;
-use tokio;
-use tokio::net::TcpStream;
-use Certificate;
-use Identity;
-use ValidCertificateChain;
 
 #[derive(Debug, Fail)]
 enum SessionError {
@@ -39,10 +29,10 @@ enum SessionError {
     IdentityMismatch,
 }
 
-pub struct Session<S: tokio::io::AsyncRead + tokio::io::AsyncWrite + Send> {
-    peer: Identity,
+pub struct Session<S: AsyncRead + AsyncWrite + Send> {
+    /*peer: Identity,
     peer_certificate: ValidCertificateChain,
-    noise: snow::Session,
+    noise: snow::Session,*/
     framed: SessionState<S>,
 }
 

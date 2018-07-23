@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct ScannerSubscription {
     pub number_of_rows: i32,
     pub instrument: String,

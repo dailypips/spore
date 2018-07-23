@@ -1,4 +1,5 @@
 use penny::Currency;
+
 pub struct CommissionReport {
     pub exec_id: String,
     pub commission: f64,
@@ -23,5 +24,5 @@ pub struct AccountValue {
     pub account: Option<String>,
     pub key: String,
     pub value: String,
-    pub cur: String
+    pub cur: String,
 }

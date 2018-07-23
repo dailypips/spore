@@ -1,5 +1,6 @@
-use api;
 use bytes::Bytes;
+use decoder::handshark::*;
+use encoder::api;
 use failure;
 use failure_derive;
 use futures::sink::Sink;
@@ -7,7 +8,10 @@ use futures::stream::Stream;
 use futures::sync::mpsc;
 use futures::sync::mpsc::{Receiver, SendError, Sender};
 use futures::Future;
-use decoder::handshark::*;
+use std::convert::From;
+use std::error;
+use std::fmt;
+use std::io;
 use std::net::SocketAddr;
 use std::time::{Duration, Instant};
 use tokio::net::ConnectFuture;
@@ -15,10 +19,6 @@ use tokio::net::TcpStream;
 use tokio::prelude::*;
 use tokio::timer::{Deadline, DeadlineError};
 use tokio_io::codec::length_delimited;
-use std::io;
-use std::convert::From;
-use std::error;
-use std::fmt;
 
 type Packet = tokio_io::codec::length_delimited::Framed<tokio::net::TcpStream, bytes::Bytes>;
 
@@ -115,15 +115,14 @@ impl From<DeadlineError<io::Error>> for SessionError {
     fn from(err: DeadlineError<io::Error>) -> SessionError {
         //SessionError::DeadlineError(err)
         if err.is_inner() {
-            return SessionError::IoError(err.into_inner().unwrap())
+            return SessionError::IoError(err.into_inner().unwrap());
         }
         if err.is_timer() {
-            return SessionError::TimerError(err.into_timer().unwrap())
+            return SessionError::TimerError(err.into_timer().unwrap());
         }
         SessionError::Timeout
     }
 }
-
 
 pub fn decode(msg: bytes::BytesMut) -> IncomingMessage {
     IncomingMessage::None
@@ -169,17 +168,19 @@ impl Session {
                         }
                     })
                     .map_err(|e| ::std::convert::From::from(e.0))
-                    //.map_err(|e| e.0)
             })
-
     }
 
-    pub fn dispatch(&self, from_tws: Sender<IncomingMessage>,
-                   to_tws: Receiver<OutgoingMessage>,
+    pub fn dispatch(
+        &self,
+        from_tws: Sender<IncomingMessage>,
+        to_tws: Receiver<OutgoingMessage>,
     ) -> impl Future<Item = Session, Error = SessionError> {
         let (to_socket, from_socket) = self.stream.split();
 
-        from_socket.select(to_tws).map_err(|e| ::std::convert::From::from(e))
+        from_socket
+            .select(to_tws)
+            .map_err(|e| ::std::convert::From::from(e))
             .map(move |self| self)
         /*let reader = from_socket
             .map_err(|e| ::std::convert::From::from(e))
@@ -191,7 +192,6 @@ impl Session {
             .fold(to_socket, |to_socket, msg| to_socket.send(encode(msg)));
 
         reader.select(writer).map_err(|e| ::std::convert::From::from(e)).map(|self| self)*/
-
     }
 
     /*pub fn runloop(

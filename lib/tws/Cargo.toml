@@ -1,5 +1,5 @@
 [package]
-name = "pgyer-ib"
+name = "libtws"
 version = "0.1.0"
 authors = ["Xiaojun Gao <gaoxiaojun@gmail.com>"]
 

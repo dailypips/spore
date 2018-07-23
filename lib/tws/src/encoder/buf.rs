@@ -1,5 +1,5 @@
+use model::tagvalue::TagValue;
 use std::{f64, i32};
-use tagvalue::TagValue;
 
 pub struct EncodeBuf {
     pub(crate) buf: Vec<u8>,
