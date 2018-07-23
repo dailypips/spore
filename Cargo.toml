@@ -1,0 +1,9 @@
+[workspace]
+members = [
+ "server/route",
+ "server/ss",
+ "server/ib",
+ "server/monitor",
+ "lib/tws",
+ "lib/core",
+]
