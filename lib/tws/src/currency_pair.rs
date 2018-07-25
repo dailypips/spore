@@ -11,9 +11,9 @@ pub enum ParseCurrencyPairError {
     )]
     ParseFormatError,
     #[fail(display = "cannot parse base currency from string")]
-    ParseBaseError,
+    ParseBaseCurrencyError,
     #[fail(display = "cannot parse seconary currency from string")]
-    ParseSeconaryError,
+    ParseSeconaryCurrencyError,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -44,10 +44,10 @@ impl FromStr for CurrencyPair {
         match pair[..] {
             [base, seconary] => Ok(CurrencyPair::new(
                 base.parse::<Currency>()
-                    .map_err(|_| ParseCurrencyPairError::ParseBaseError)?,
+                    .map_err(|_| ParseCurrencyPairError::ParseBaseCurrencyError)?,
                 seconary
                     .parse::<Currency>()
-                    .map_err(|_| ParseCurrencyPairError::ParseSeconaryError)?,
+                    .map_err(|_| ParseCurrencyPairError::ParseSeconaryCurrencyError)?,
             )),
             _ => Err(ParseCurrencyPairError::ParseFormatError),
         }
