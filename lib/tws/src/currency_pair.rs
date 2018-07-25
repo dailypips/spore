@@ -38,7 +38,7 @@ impl CurrencyPair {
 
 impl fmt::Display for CurrencyPair {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}.{}", self.base, self.seconary)
+        write!(f, "{}.{}", self.base(), self.seconary())
     }
 }
 
