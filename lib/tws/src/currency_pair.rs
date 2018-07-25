@@ -1,32 +1,19 @@
+#![feature(slice_patterns)]
+use failure::Fail;
 use penny::Currency;
 use std::fmt;
 use std::str::FromStr;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ParseCurrencyPairError {
-    kind: CurrencyPairErrorKind,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum CurrencyPairErrorKind {
-    Base,
-    Seconary,
-}
-
-impl ParseCurrencyPairError {
-    #[doc(hidden)]
-    pub fn __description(&self) -> &str {
-        match self.kind {
-            CurrencyPairErrorKind::Base => "cannot parse base currency from string",
-            CurrencyPairErrorKind::Seconary => "cannot parse seconary currency from string",
-        }
-    }
-}
-
-impl fmt::Display for ParseCurrencyPairError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.__description().fmt(f)
-    }
+#[derive(Debug, Fail, Clone, PartialEq, Eq)]
+pub enum ParseCurrencyPairError {
+    #[fail(
+        display = "cannot parse currency pair from string, currency pair fomat error, example:'EUR.USD' or 'EUR/USD'"
+    )]
+    ParseFormatError,
+    #[fail(display = "cannot parse base currency from string")]
+    ParseBaseError,
+    #[fail(display = "cannot parse seconary currency from string")]
+    ParseSeconaryError,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -54,17 +41,15 @@ impl FromStr for CurrencyPair {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let pair: Vec<&str> = s.trim().split(|c| c == '.' || c == '/').collect();
-        let base = pair[0]
-            .parse::<Currency>()
-            .map_err(|_| ParseCurrencyPairError {
-                kind: CurrencyPairErrorKind::Base,
-            })?;
-        let seconary = pair[1]
-            .parse::<Currency>()
-            .map_err(|_| ParseCurrencyPairError {
-                kind: CurrencyPairErrorKind::Seconary,
-            })?;
-
-        Ok(CurrencyPair::new(base, seconary))
+        match pair[..] {
+            [base, seconary] => Ok(CurrencyPair::new(
+                base.parse::<Currency>()
+                    .map_err(|_| ParseCurrencyPairError::ParseBaseError)?,
+                seconary
+                    .parse::<Currency>()
+                    .map_err(|_| ParseCurrencyPairError::ParseSeconaryError)?,
+            )),
+            _ => Err(ParseCurrencyPairError::ParseFormatError),
+        }
     }
 }
