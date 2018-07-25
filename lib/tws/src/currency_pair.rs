@@ -56,12 +56,12 @@ impl FromStr for CurrencyPair {
         let pair: Vec<&str> = s.trim().split(|c| c == '.' || c == '/').collect();
         let base = pair[0]
             .parse::<Currency>()
-            .map_err(|e| ParseCurrencyPairError {
+            .map_err(|_| ParseCurrencyPairError {
                 kind: CurrencyPairErrorKind::Base,
             })?;
         let seconary = pair[1]
             .parse::<Currency>()
-            .map_err(|e| ParseCurrencyPairError {
+            .map_err(|_| ParseCurrencyPairError {
                 kind: CurrencyPairErrorKind::Seconary,
             })?;
 
